@@ -13,6 +13,10 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Carbon\Carbon;
+
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
+
 class BackupController extends Controller
 {
 
@@ -69,37 +73,54 @@ $time = Carbon::parse($value->backup_time)->format('H:i:s');
 
 public function download()
 {
-    $dbHost = env('DB_HOST');
-    $dbUser = env('DB_USERNAME');
-    $dbPass = env('DB_PASSWORD');
+    $tables = DB::select('SHOW TABLES');
     $dbName = env('DB_DATABASE');
+    $tableKey = "Tables_in_{$dbName}";
 
-    $timestamp = Carbon::now('Asia/Karachi')->format('Y_m_d_His');
-    $filename = "{$dbName}_backup_{$timestamp}.sql";
-    $filepath = storage_path("app/{$filename}");
+    $sql = "SET FOREIGN_KEY_CHECKS=0;\n\n";
 
-    $safePassword = str_replace("'", "'\\''", $dbPass);
-    $command = "mysqldump -h {$dbHost} -u {$dbUser} -p'{$safePassword}' {$dbName} > {$filepath}";
+    foreach ($tables as $tableObj) {
+        $table = $tableObj->$tableKey;
 
-    exec($command, $output, $returnVar);
+        $createTable = DB::select("SHOW CREATE TABLE `$table`")[0]->{'Create Table'};
+        $sql .= "-- Table structure for `$table`\n";
+        $sql .= "DROP TABLE IF EXISTS `$table`;\n";
+        $sql .= $createTable . ";\n\n";
 
-    if ($returnVar !== 0 || !file_exists($filepath)) {
-        return response()->json([
-            'error' => 'Backup failed. Check credentials, permissions, or mysqldump installation.'
-        ], 500);
+        $rows = DB::table($table)->get();
+
+        if ($rows->count()) {
+            $sql .= "-- Dumping data for `$table`\n";
+            foreach ($rows as $row) {
+                $values = array_map(function ($value) {
+                    return isset($value) ? "'" . addslashes($value) . "'" : 'NULL';
+                }, (array) $row);
+
+                $sql .= "INSERT INTO `$table` VALUES(" . implode(',', $values) . ");\n";
+            }
+            $sql .= "\n";
+        }
     }
 
+    $sql .= "SET FOREIGN_KEY_CHECKS=1;\n";
 
+    $timestamp = Carbon::now('Asia/Karachi')->format('Y_m_d_His');
+    $fileName = "{$dbName}_backup_{$timestamp}.sql";
+    $filePath = storage_path("app/{$fileName}");
+
+    File::put($filePath, $sql);
+
+    // ✅ Save backup record to database
     Backup::create([
         'action'       => 'Database Backup',
-        'backlog'      => "Backup file created: {$filename}",
+        'backlog'      => "Backup file created: {$fileName}",
         'backup_date'  => Carbon::now('Asia/Karachi')->toDateString(),
         'backup_time'  => Carbon::now('Asia/Karachi')->toTimeString(),
     ]);
 
-
-    return response()->download($filepath)->deleteFileAfterSend(true);
+    return response()->download($filePath)->deleteFileAfterSend(true);
 }
+
 
 public function delete($id)
 {
