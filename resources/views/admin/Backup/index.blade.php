@@ -7,23 +7,6 @@ href="{{asset('admin/assets/node_modules/datatables.net-bs4/css/dataTables.boots
 href="{{asset('admin/assets/node_modules/datatables.net-bs4/css/responsive.dataTables.min.css')}}">
 <link href="{{asset('admin/assets/node_modules/switchery/dist/switchery.min.css')}}" rel="stylesheet" type="text/css" />
 
-<style>
-
-    table td{
-        /* border: 1px solid lightgray; */
-    }
-
-    table th{
-        /* border: 1px solid lightgray; */
-    }
-
-    @media (max-width: 767px){
-        .container-fluid, .container-sm, .container-md, .container-lg, .container-xl, .container-xxl {
-            overflow: scroll!important;
-        }
-    }
-
-</style>
 @endsection
 
 @section('content')
