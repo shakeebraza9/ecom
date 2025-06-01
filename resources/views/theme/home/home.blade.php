@@ -5,14 +5,15 @@
     <title>{{$_s['site_title']}}</title>
     <meta name="description" content="{{$_s['meta_description']}}">
     <meta name="keywords" content="{{$_s['meta_keywords']}}">
-   
-  
+
+
+
 @endsection
 
 @section('css')
 
 <style>
-   
+
 </style>
 
 @endsection
@@ -31,7 +32,7 @@
         <!-- collection -->
             @include('theme.home.collections')
         {{-- End  collection--}}
-        
+
         <div class="section">
             <div class="hero hero--medium hero__overlay bg-size background-parallax" style="background-image: url('{{$_s['home_page_banner']}}'); background-size: cover; background-position: 50% 31px; background-repeat: no-repeat;">
                 <img class="bg-img blur-up" src="{{$_s['home_page_banner']}}" alt="banner" style="display: none;">
@@ -41,10 +42,10 @@
                             <p class="mega-small-title">{{$_s['site_title']}}</p>
                             <h2 class="h1 mega-title">Best Collection</h2>
                             <p class="mega-subtitle">Get Inspired By The Latest And Greatest Trend</p>
-                            <a href="{{URL::to('/shop')}}" class="btn border-btn-1 btn--large">Shop Now</a>  
+                            <a href="{{URL::to('/shop')}}" class="btn border-btn-1 btn--large">Shop Now</a>
                         </div>
                     </div>
-                </div>            
+                </div>
             </div>
         </div>
 
@@ -55,11 +56,11 @@
 
 
 
-   
 
-    
 
-   
+
+
+
 
 
 

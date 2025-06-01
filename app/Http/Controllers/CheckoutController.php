@@ -42,7 +42,7 @@ class CheckoutController extends Controller
      */
     public function __construct()
     {
-        
+
 
     }
 
@@ -113,8 +113,8 @@ class CheckoutController extends Controller
                 'grandtotal'  => $cart['grand_total'],
                 'is_enable'  => 1,
             ]);
-         
-     
+
+
             foreach ($cart['cart_items'] as $cart_item) {
                 OrderItem::create([
                     'order_id' => $order->id,
@@ -129,7 +129,7 @@ class CheckoutController extends Controller
                 ]);
             }
 
-        
+
             // EmailUtility::send_customer_email($order->id);
             session()->put('cart',[]);
         //    DB::commit();
@@ -151,18 +151,18 @@ class CheckoutController extends Controller
     public function order_confirmaton(Request $request,$id)
     {
 
-        
 
-        $order = Order::where('tracking_id',$id)->first(); 
-        
+
+        $order = Order::where('tracking_id',$id)->first();
+
         $statusId = $order->order_status;
-        $orderStatus = OrderStatus::where('id',$statusId)->first(); 
+        $orderStatus = OrderStatus::where('id',$statusId)->first();
 
         if(!$order){
           return redirect('/shop')->with('error','Record Not Found');
         }
 
-     
+
         return view('theme.order_confirmation',compact('order','orderStatus'));
 
     }
@@ -185,7 +185,7 @@ class CheckoutController extends Controller
 
         return view('theme.order_tracking');
     }
-    
+
      /**
      * Show the application dashboard.
      */
@@ -204,5 +204,5 @@ class CheckoutController extends Controller
 
     }
 
-   
+
 }

@@ -3,42 +3,43 @@
 namespace App\Http\Utilities;
 
 use App\Models\Order;
+use App\Models\Setting;
 use App\Models\OrderStatus;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\View;
 
-class EmailUtility 
+class EmailUtility
 {
 
 
-    public static function getPdf($id){
+   public static function getPdf($id){
+    $settings = Setting::pluck('value', 'field')->toArray();
+    $data = Order::find($id);
+    $status = OrderStatus::where('id', $data->order_status)->first();
 
-        $settings = view()->shared('_s');
-        $data = Order::find($id);
-        $status =OrderStatus::where('id',$data->order_status)->first();
-        $mpdf = new \Mpdf\Mpdf([
-            'mode' => 'utf-8',
-            'orientation' => 'P',
-            'format'      => 'A4',
-            'margin_left' => 0,
-            'margin_right' => 0,
-            'margin_top' => 0,
-            'margin_bottom' => 0,
-        ]);
-   
-        $html = Blade::render('theme.invoice',compact('data','settings','status'));
-        $mpdf->WriteHTML($html);
-        $pdfContent = $mpdf->Output('', 'S');
-        return $pdfContent;
-        
-    }
+    $mpdf = new \Mpdf\Mpdf([
+        'mode' => 'utf-8',
+        'orientation' => 'P',
+        'format'      => 'A4',
+        'margin_left' => 0,
+        'margin_right' => 0,
+        'margin_top' => 0,
+        'margin_bottom' => 0,
+    ]);
+
+    $html = Blade::render('theme.invoice', compact('data', 'settings', 'status'));
+    $mpdf->WriteHTML($html);
+    $pdfContent = $mpdf->Output('', 'S');
+    return $pdfContent;
+}
+
 
 
     public static function generatePdf($id){
 
         $pdfContent = EmailUtility::getPdf($id);
-        $pdfPath = public_path('admin/invoices/'.$id.'.pdf'); 
+        $pdfPath = public_path('admin/invoices/'.$id.'.pdf');
         file_put_contents($pdfPath, $pdfContent);
 
         return $pdfPath;
@@ -59,17 +60,17 @@ class EmailUtility
             $message->subject('Order Receipt - ' . '#'.$data['id']);
             $message->from(env('MAIL_USERNAME'), $data['site_title']);
             $message->cc($data['admin_email']);
-            
+
             $message->attach($data['pdf_path'], array(
-                'as' => 'order-invoice'.$data['id'].'.pdf',      
+                'as' => 'order-invoice'.$data['id'].'.pdf',
                 'mime' => 'application/pdf')
             );
 
         });
 
     }
-    
 
 
-   
+
+
 }

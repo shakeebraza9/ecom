@@ -38,7 +38,7 @@ class FilemanagerController extends Controller
 
     public function search(Request $request)
     {
-      
+
         $files = Filemanager::where('is_enable',1);
 
         if($request->has('q') && $request->q != ''){
@@ -61,15 +61,15 @@ class FilemanagerController extends Controller
         return response()->json(['results' => $data],200);
     }
 
- 
+
     public function index(Request $request)
     {
     if($request->ajax()){
     $data = [];
 
-    $query = Filemanager::query(); 
+    $query = Filemanager::query();
 
-// searching 
+// searching
 if ($request->search['value']) {
     $searchTerm = $request->search['value'];
     $query->where(function($query) use ($searchTerm) {
@@ -87,7 +87,7 @@ if ($request->search['value']) {
 
 
 
-// filters 
+// filters
     // if($request->date){
     //     $query->whereDate('created_at', '=', $request->date);
     // }
@@ -122,7 +122,7 @@ if ($request->search['value']) {
   if($request->group){
         $query->where('grouping', 'like', '%'.$request->group.'%');
     }
-    $totalRecords = $query->count(); 
+    $totalRecords = $query->count();
 
     $records = $query->orderBy('id', 'desc')
                      ->skip($request->start)
@@ -135,7 +135,7 @@ if ($request->search['value']) {
         $action .= '<a class="btn btn-danger" href="'.URL::to('admin/filemanager/delete/'.$record->id).'">Delete</a>';
         $action .= '</div>';
 
-        $images = '<img style="width:100px;height:50px" src="' . URL::to($record->path ). '">'; 
+        $images = '<img style="width:100px;height:50px" src="' . URL::to($record->path ). '">';
         $createdAt = $record->created_at->format('d,m,Y');
         $sizeInBytes = $record->size;
             if ($sizeInBytes >= 1048576) {
@@ -162,8 +162,8 @@ if ($request->search['value']) {
 
     return response()->json([
         "draw" => $request->draw,
-        "recordsTotal" => $totalRecords, 
-        "recordsFiltered" => $totalRecords, 
+        "recordsTotal" => $totalRecords,
+        "recordsFiltered" => $totalRecords,
         'data' => $data,
     ]);
 }
@@ -172,8 +172,8 @@ if ($request->search['value']) {
 
     $uniqueExtensions = Filemanager::distinct()->pluck('extension');
         return view('admin.filemanager.index',compact('uniqueGroups','uniqueExtensions'));
-    } 
-    
+    }
+
     function formatSizeUnits($bytes)
     {
         if ($bytes >= 1073741824) {
@@ -189,7 +189,7 @@ if ($request->search['value']) {
         } else {
             $bytes = '0 bytes';
         }
-    
+
         return $bytes;
     }
 
@@ -206,7 +206,7 @@ public function store(Request $request)
         'title' => ['max:255'],
         'group' => ['required', 'max:255'],
         'description' => ['max:255'],
-        'files.*' => ['required', 'file', 'mimes:jpg,png,pdf', 'max:2048'],
+        'files.*' => ['required'],
     ]);
 
     // Check if any files are uploaded
@@ -270,7 +270,7 @@ public function store(Request $request)
 
 
     // public function update(Request $request,$id)
-    // {  
+    // {
 
     //     $filemanager = Filemanager::find($id);
     //     if($filemanager == null){
@@ -292,37 +292,37 @@ public function store(Request $request)
 
     // }
     public function update(Request $request, $id)
-    {  
+    {
         $filemanager = Filemanager::find($id);
         if (!$filemanager) {
             return back()->with('error', 'File not found');
         }
-    
+
         $request->validate([
             'title' => ['max:255'],
             'group' => ['required', 'max:255'],
             'description' => ['max:255'],
             'files.*' => ['image', 'max:2048'], // Validate each image file
         ]);
-    
+
         // Update the filemanager details
         $filemanager->title = $request->title;
         $filemanager->grouping = $request->group;
         $filemanager->description = $request->description;
         $filemanager->save();
-    
+
         // Handle image upload if new images are provided
         if ($request->hasFile('files')) {
             foreach ($request->file('files') as $file) {
                 $fileExtension = $file->getClientOriginalExtension();
                 $fileSizeInBytes = $file->getSize();
                 $mimeType = $file->getMimeType();
-                $fileTitle = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);        
+                $fileTitle = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
                 $filename = uniqid().'.'.$fileExtension;
                 $path = 'filemanager/'.$filename;
                 $upload_path = public_path('filemanager');
                 $file->move($upload_path, $filename);
-    
+
                     $filemanager->size = $fileSizeInBytes;
                     $filemanager->type = $mimeType;
                     $filemanager->extension = $fileExtension;
@@ -332,7 +332,7 @@ public function store(Request $request)
             }
         }
         $newData = Filemanager::find($id);
-    
+
         return response()->json(['success' => 'File details updated' ,'data'=>$newData]);
     }
 
@@ -352,7 +352,7 @@ public function store(Request $request)
             } else {
                 // echo 'Unable to remove the file.';
             }
-        } 
+        }
 
 
         $filemanager->delete();
@@ -360,5 +360,5 @@ public function store(Request $request)
 
     }
 
-    
+
 }

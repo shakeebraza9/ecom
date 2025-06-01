@@ -91,7 +91,7 @@
             /* display:inline-block; */
             width:46%;
             vertical-align:top;
-            
+
         }
 
         .customer_details h6{
@@ -137,7 +137,7 @@
         .invoice_items span{
             font-size: 12px;
         }
-       
+
 
 
 
@@ -149,7 +149,7 @@
         .label{
             width: 50px;
         }
-    
+
         .text-center{
             text-align: center;
         }
@@ -174,8 +174,8 @@
         <div class="row">
             <div class="logo_details">
                 <div class="logo">
-                    
-                    <img style="width:180px;" src="{{asset($_s['logo']->path)}}" />
+
+                  <img src="{{ public_path($settings['logo']) }}" alt="Logo">
                 </div>
                 <div style="padding-top:30px" class="div">
                     <h6>Order Details:</h6>
@@ -187,7 +187,7 @@
                 </div>
             </div>
             <div class="company_details">
-                
+
                 <div class="div">
                     <h6>Bill From:</h6>
                     <div>
@@ -204,7 +204,7 @@
                     <p>{{$data->customer_phone}}</p>
                     <p>{{$data->customer_email}}</p>
                     <p>{{$data->country}},{{$data->city}}</p>
-                    <p>{{$data->address}}</p> 
+                    <p>{{$data->address}}</p>
                </div>
             </div>
         </div>
@@ -220,14 +220,14 @@
                 <th>Total</th>
             </tr>
             @foreach ($data->children as $item)
-                <?php 
+                <?php
                   $attr = json_decode($item->attr);
                 ?>
                 <tr class="invoice_items">
-                    <td><p>{{$item->title}} - ({{$item->sku}})</p> 
+                    <td><p>{{$item->title}} - ({{$item->sku}})</p>
                         @if($attr)
                        @foreach ($attr as $key => $att)
-                        <span>{{$att->attribute_title}}:{{$att->values_title}}</span> <br>  
+                        <span>{{$att->attribute_title}}:{{$att->values_title}}</span> <br>
                        @endforeach
                        @endif
                     </td>

@@ -29,40 +29,34 @@ class AppServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot()
-    {
+   public function boot()
+{
+    Schema::defaultStringLength(191);
+    $_s = [];
 
-        Schema::defaultStringLength(191);
-       $_s = [];
+    if (Schema::hasTable('settings')) {
 
-        
-       
-        if (Schema::hasTable('settings')) {
+        // 🟢 Directly get data from DB without cache
+        $settings_Data = Setting::with('image')->orderBy('group_sorting')->get();
 
-            $settings_Data = Cache::rememberForever('settings',function () {
-                return Setting::with('image')->orderBy('group_sorting')->get();
-            });
+        $groups = [];
+        $settings = [];
 
-             $groups = [];
-             $settings = [];
-             foreach ($settings_Data as $key => $value) {
-                $settings[$value->field] = $value->value;
-                array_push($groups,$value->grouping);
-             }
-           
-             
-             $_s = $settings;
-             $_s['grouping'] = implode(',',array_unique($groups)); 
+        foreach ($settings_Data as $key => $value) {
+            $settings[$value->field] = $value->value;
+            array_push($groups, $value->grouping);
         }
 
-        if (Schema::hasTable('settings')) {   
-            $_s['menus'] = Cache::rememberForever('menus',function () {
-                return Menu::with('children.children.children')->get(); 
-            });
-        }
-
-        View::share('_s',$_s);
-
+        $_s = $settings;
+        $_s['grouping'] = implode(',', array_unique($groups));
     }
+
+    if (Schema::hasTable('settings')) {
+        // 🟢 Again, no cache
+        $_s['menus'] = Menu::with('children.children.children')->get();
+    }
+
+    View::share('_s', $_s);
+}
 
 }

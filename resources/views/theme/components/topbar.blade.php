@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col-10 col-sm-8 col-md-7 col-lg-4">
                 <p class="phone-no float-start"><i class="icon an an-phone me-1"></i>
-                    <a href="tel:+4400(111)044833">{{$_s['phone_number']}}</a></p>
+                    <a href="tel:{{$_s['phone_number']}}">{{$_s['phone_number']}}</a></p>
             </div>
             <div class="col-sm-4 col-md-4 col-lg-4 d-none d-md-none d-lg-block">
                 <div class="text-center">
@@ -15,12 +15,12 @@
                     <ul class="justify-content-end list--inline social-icons">
                         @if($_s['facebook_link'])
                         <li>
-                            <a class="social-icons__link" 
-                                href="{{$_s['facebook_link']}}" 
-                                target="_blank" 
-                                data-bs-toggle="tooltip" 
-                                data-bs-placement="bottom" 
-                                title="Facebook"><i class="icon an an-facebook"></i> 
+                            <a class="social-icons__link"
+                                href="{{$_s['facebook_link']}}"
+                                target="_blank"
+                                data-bs-toggle="tooltip"
+                                data-bs-placement="bottom"
+                                title="Facebook"><i class="icon an an-facebook"></i>
                                 <span class="icon__fallback-text">Facebook</span>
                             </a>
                         </li>
