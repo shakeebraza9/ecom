@@ -194,7 +194,7 @@ class CheckoutController extends Controller
 
         $pdfContent = EmailUtility::getPdf($id);
 
-        $name = "#".$id.'-order-irhawears.pdf';
+        $name = "#".$id.'-order-therareperfumes.pdf';
 
         return Response::make($pdfContent, 200, [
             'Content-Type' => 'application/pdf',
