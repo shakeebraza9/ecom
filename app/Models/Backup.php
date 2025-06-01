@@ -9,5 +9,5 @@ class Backup extends Model
     protected $table = 'backups';
     protected $fillable = ['action','backlog','backup_date', 'backup_time'];
 
-    public $timestamps = false;
+     public $timestamps = false;
 }
