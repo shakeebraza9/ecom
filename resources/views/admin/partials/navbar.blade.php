@@ -1,5 +1,5 @@
 
-<li><a class=" waves-effect waves-dark" href="{{URL::to('admin/dashboard')}}" 
+<li><a class=" waves-effect waves-dark" href="{{URL::to('admin/dashboard')}}"
     aria-expanded="false"><i class="icon-speedometer"></i>
     <span class="hide-menu">Dashboard</span></a>
 </li>
@@ -14,7 +14,7 @@
 </li>
 
 <li> <a class="has-arrow waves-effect waves-dark" href="javascript:void(0)" aria-expanded="false"><i class="mdi mdi-google-pages"></i>
-    <span class="hide-menu"> Pages </span></a>    
+    <span class="hide-menu"> Pages </span></a>
     <ul aria-expanded="false" class="collapse">
         <li><a href="{{URL::to('admin/page/create')}}">Add New pages</a></li>
         <li><a href="{{URL::to('admin/page/index')}}">All pages</a></li>
@@ -78,12 +78,21 @@
     <ul aria-expanded="false" class="collapse">
        @foreach (explode(',',$_s['grouping']) as $item)
         <li><a href="{{URL::to('admin/settings/edit')}}?group={{$item}}">
-          {{ ucwords(str_ireplace("_", " ",$item))}}</a></li>  
+          {{ ucwords(str_ireplace("_", " ",$item))}}</a></li>
        @endforeach
     </ul>
 </li>
 
-<li><a class=" waves-effect waves-dark" href="{{URL::to('/admin/logout')}}" 
+
+<li>
+    <a class="waves-effect waves-dark" href="{{ URL::to('admin/backup') }}" aria-expanded="false">
+        <i class="ti-save"></i>
+        <span class="hide-menu">Backup</span>
+    </a>
+</li>
+
+
+<li><a class=" waves-effect waves-dark" href="{{URL::to('/admin/logout')}}"
     aria-expanded="false"><i class="icon-speedometer"></i>
     <span class="hide-menu">Logout</span></a>
 </li>
