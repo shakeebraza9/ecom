@@ -36,15 +36,22 @@ class EmailUtility
 
 
 
-    public static function generatePdf($id){
+public static function generatePdf($id)
+{
+    $pdfContent = EmailUtility::getPdf($id);
+    $directory = public_path('admin/invoices');
 
-        $pdfContent = EmailUtility::getPdf($id);
-        $pdfPath = public_path('admin/invoices/'.$id.'.pdf');
-        file_put_contents($pdfPath, $pdfContent);
-
-        return $pdfPath;
-
+    // Create the directory if it doesn't exist
+    if (!file_exists($directory)) {
+        mkdir($directory, 0755, true);
     }
+
+    $pdfPath = $directory . '/' . $id . '.pdf';
+    file_put_contents($pdfPath, $pdfContent);
+
+    return $pdfPath;
+}
+
 
     public static function send_customer_email($id){
 

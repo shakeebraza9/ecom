@@ -130,7 +130,7 @@ class CheckoutController extends Controller
             }
 
 
-            // EmailUtility::send_customer_email($order->id);
+            EmailUtility::send_customer_email($order->id);
             session()->put('cart',[]);
         //    DB::commit();
 
