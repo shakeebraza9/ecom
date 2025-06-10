@@ -12,7 +12,7 @@ href="{{asset('admin/assets/node_modules/datatables.net-bs4/css/responsive.dataT
 @section('content')
     <div class="row page-titles">
         <div class="col-md-5 align-self-center">
-            <h4 class="text-themecolor">ALL CUSTOMERS LIST 
+            <h4 class="text-themecolor">ALL CUSTOMERS LIST
             </h4>
         </div>
         <div class="col-md-7 align-self-center text-end">
@@ -33,7 +33,7 @@ href="{{asset('admin/assets/node_modules/datatables.net-bs4/css/responsive.dataT
                             <header class="card-header bg-info">
                                 <h4 class="mb-0 text-white" >All Customer Filters</h4>
                             </header>
-                        <div class="card-body">    
+                        <div class="card-body">
                           <div class="table-responsive">
                           <div class="container">
     <form id="orderForm">
@@ -51,7 +51,7 @@ href="{{asset('admin/assets/node_modules/datatables.net-bs4/css/responsive.dataT
                 <input type="tel" class="phone" id="phone" name="phone" >
             </div>
         </div>
-        
+
         <div class="row">
             <div class="col">
                 <label for="address">Address:</label>
@@ -66,7 +66,7 @@ href="{{asset('admin/assets/node_modules/datatables.net-bs4/css/responsive.dataT
                 <input type="number" class="totalAmount" id="totalAmount" name="totalAmount" >
             </div> -->
         </div>
-        
+
         <div class="row">
             <div class="col">
                 <label for="paymentMethod">Payment Method:</label>
@@ -91,7 +91,7 @@ href="{{asset('admin/assets/node_modules/datatables.net-bs4/css/responsive.dataT
                     @endif
                 </select>
             </div>
-            
+
             <div class="col">
                 <label for="paymentStatus">Payment Status:</label>
                 <select id="paymentStatus" class="paymentStatus" name="paymentStatus" >
@@ -111,7 +111,7 @@ href="{{asset('admin/assets/node_modules/datatables.net-bs4/css/responsive.dataT
                 <input type="date" class="endDate" id="endDate" name="endDate" >
             </div>
         </div>
-        
+
         <div class="sidebar">
             <button type="button" class="search_result" id="searchorders">Search</button>
             <button class="btn_pdf">Export PDF</button>
@@ -119,7 +119,7 @@ href="{{asset('admin/assets/node_modules/datatables.net-bs4/css/responsive.dataT
         </div>
     </form>
 </div>
-                           
+
                     </div>
                     </div>
                 </div>
@@ -130,19 +130,19 @@ href="{{asset('admin/assets/node_modules/datatables.net-bs4/css/responsive.dataT
                             <header class="card-header bg-info">
                                 <h4 class="mb-0 text-white" >All Customer List</h4>
                             </header>
-                        <div class="card-body">    
+                        <div class="card-body">
                           <div class="table-responsive">
                           <div class="container">
       <table id="example23" class="mydatatable display nowrap table table-hover table-striped border" cellspacing="0" width="100%">
                                     <thead>
-                                       
+
                                         <tr class="" >
-                                            <th>Order id</th> 
-                                            <th>Order Date</th>   
+                                            <th>Order id</th>
+                                            <th>Order Date</th>
                                             <th>Customer name</th>
                                             <th>Email</th>
-                                            <th>Phone </th>    
-                                            <th>Address</th>   
+                                            <th>Phone </th>
+                                            <th>Address</th>
                                             <th>Order status</th>
                                             <th>Payment method</th>
                                             <th>Payment status</th>
@@ -162,24 +162,24 @@ href="{{asset('admin/assets/node_modules/datatables.net-bs4/css/responsive.dataT
 
 @endsection
  @section('js')
-        
+
        <script src="{{asset('admin/assets/node_modules/datatables.net/js/jquery.dataTables.min.js')}}"></script>
        <script src="{{asset('admin/assets/node_modules/datatables.net-bs4/js/dataTables.responsive.min.js')}}"></script>
-      
-    
+
+
 
        <script>
         $(function () {
-            
+
             var application_table = $('.mydatatable').DataTable({
             processing: true,
-            "searching": true,  
+            "searching": true,
             fixedColumns: false,
             fixedHeader: false,
             scrollCollapse: false,
             scrollX: true,
             // scrollY: '500px',
-            autoWidth: false, 
+            autoWidth: false,
             dom: 'lfrtip',
             serverSide: true,
             lengthMenu: [[10,25, 50, 100,500],[10,25, 50, 100,500]],
@@ -198,34 +198,73 @@ href="{{asset('admin/assets/node_modules/datatables.net-bs4/css/responsive.dataT
                     d.paymentStatus = $('.paymentStatus').val();
                     d.startDate = $('.startDate').val();
                     d.endDate = $('.endDate').val();
-                   
-                    
 
-                   
+
+
+
                 }
             },
-            initComplete: function () {  
+            initComplete: function () {
                 $('.js-switch').each(function () {
                    new Switchery($(this)[0], $(this).data());
-                 });               
+                 });
             }
         });
-        $('.search_result').click(function(){          
+        $('.search_result').click(function(){
             application_table.draw();
             // alert("hello");
         });
         // $('input[type=search]').unbind();
-        $("#searchButton").click(e =>{ 
+        $("#searchButton").click(e =>{
             application_table.search($('input[type=search]').val());
             application_table.draw();
         });
 
-        $("#example23 thead .row-checkbox").change(function (e) { 
+        $("#example23 thead .row-checkbox").change(function (e) {
             var isChecked = $(this).prop('checked');
             $('#example23 tbody .row-checkbox').prop('checked', isChecked);
         });
 
+        $('.btn_pdf').click(function () {
+    let params = {
+        name: $(".customerName").val(),
+        email: $(".email").val(),
+        phone: $(".phone").val(),
+        address: $(".address").val(),
+        orderNumber: $(".orderNumber").val(),
+        totalAmount: $(".totalAmount").val(),
+        paymentMethod: $(".paymentMethod").val(),
+        orderStatus: $(".orderStatus").val(),
+        paymentStatus: $(".paymentStatus").val(),
+        startDate: $(".startDate").val(),
+        endDate: $(".endDate").val()
+    };
+
+    let query = $.param(params);
+    window.open("{{ route('admin.reports.clients.exportPdf') }}?" + query, '_blank');
+});
+
+$('.btn_exe').click(function () {
+    let params = {
+        name: $(".customerName").val(),
+        email: $(".email").val(),
+        phone: $(".phone").val(),
+        address: $(".address").val(),
+        orderNumber: $(".orderNumber").val(),
+        totalAmount: $(".totalAmount").val(),
+        paymentMethod: $(".paymentMethod").val(),
+        orderStatus: $(".orderStatus").val(),
+        paymentStatus: $(".paymentStatus").val(),
+        startDate: $(".startDate").val(),
+        endDate: $(".endDate").val()
+    };
+
+    let query = $.param(params);
+    window.open("{{ route('admin.reports.clients.exportExcel') }}?" + query, '_blank');
+});
+
+
       });
-      
+
     </script>
 @endsection

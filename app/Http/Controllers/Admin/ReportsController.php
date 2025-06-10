@@ -10,7 +10,9 @@ use Illuminate\Http\Request;
 use App\Models\PaymentMethod;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\URL;
-
+use Barryvdh\DomPDF\Facade\Pdf;
+use App\Exports\OrdersExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ReportsController extends Controller
 {
@@ -25,7 +27,7 @@ class ReportsController extends Controller
     |
     */
 
- 
+
     /**
      * Create a new controller instance.
      *
@@ -34,7 +36,7 @@ class ReportsController extends Controller
     public function clientIndex(Request $request)
     {
 
-    
+
         if($request->ajax()){
 
             $query = Order::Query();
@@ -59,7 +61,7 @@ class ReportsController extends Controller
             if ($request->startDate && $request->endDate) {
                 $query->whereBetween('created_at', [$request->startDate, $request->endDate]);
             }
-            
+
             if ($request->paymentMethod) {
                 $query->where('payment_method', 'like', '%' . $request->paymentMethod . '%');
             }
@@ -72,11 +74,11 @@ class ReportsController extends Controller
 
             $query = $query->orderBy('id', 'desc');
             $count = $query->get();
-            
+
             $records = $query->skip($request->start)
             ->take($request->length)
             ->get();
-            
+
             $data = [];
             foreach ($records as $key => $value) {
                 $staus=OrderStatus::where('id',$value->order_status)->first();
@@ -93,13 +95,13 @@ class ReportsController extends Controller
                     $value->customer_email,
                     $value->customer_phone,
                     $value->address,
-                    // $track,  
+                    // $track,
                     // $action,
                     $staus ? $staus->title :'',
                     $PaymentMethod ? $PaymentMethod->title :'',
                     // str_replace('_', ' ',$value->payment_method),
-                    $value->payment_status,  
-                    'PKR '.$value->grandtotal,                          
+                    $value->payment_status,
+                    'PKR '.$value->grandtotal,
                  ]
                 );
             }
@@ -111,16 +113,58 @@ class ReportsController extends Controller
                 'data'=> $data,
             ]);
         }
-        
-        $category = Category::all();    
-        $status = OrderStatus::all();  
-        $PaymentMethod = PaymentMethod::all();     
+
+        $category = Category::all();
+        $status = OrderStatus::all();
+        $PaymentMethod = PaymentMethod::all();
         return view('admin.reports.clients.index',compact('category','status','PaymentMethod'));
     }
 
-    
+public function exportPdf(Request $request)
+{
+    $query = Order::query();
 
+    if ($request->name) {
+        $query->where('customer_name', 'like', '%' . $request->name . '%');
+    }
+    if ($request->email) {
+        $query->where('customer_email', $request->email);
+    }
+    if ($request->phone) {
+        $query->where('customer_phone', 'like', '%' . $request->phone . '%');
+    }
+    if ($request->address) {
+        $query->where('address', 'like', '%' . $request->address . '%');
+    }
+    if ($request->orderNumber) {
+        $query->where('id', $request->orderNumber);
+    }
+    if ($request->totalAmount) {
+        $query->where('grandtotal', 'like', '%' . $request->totalAmount . '%');
+    }
+    if ($request->startDate && $request->endDate) {
+        $query->whereBetween('created_at', [$request->startDate, $request->endDate]);
+    }
+    if ($request->paymentMethod) {
+        $query->where('payment_method', 'like', '%' . $request->paymentMethod . '%');
+    }
+    if ($request->orderStatus) {
+        $query->where('order_status', $request->orderStatus);
+    }
+    if ($request->paymentStatus) {
+        $query->where('payment_status', $request->paymentStatus);
+    }
 
+    $orders = $query->orderBy('id', 'desc')->get();
+
+    $pdf = Pdf::loadView('admin.reports.clients.pdf', compact('orders'));
+    return $pdf->download('orders_report.pdf');
+}
+
+public function exportExcel(Request $request)
+{
+    return Excel::download(new OrdersExport($request), 'orders_report.xlsx');
+}
     public function productIndex(Request $request)
     {
 
@@ -148,7 +192,7 @@ class ReportsController extends Controller
             if ($request->startDate && $request->endDate) {
                 $query->whereBetween('created_at', [$request->startDate, $request->endDate]);
             }
-            
+
             if ($request->paymentMethod) {
                 $query->where('payment_method', 'like', '%' . $request->paymentMethod . '%');
             }
@@ -161,11 +205,11 @@ class ReportsController extends Controller
 
             $query = $query->orderBy('id', 'desc');
             $count = $query->get();
-            
+
             $records = $query->skip($request->start)
             ->take($request->length)
             ->get();
-            
+
             $data = [];
             foreach ($records as $key => $value) {
                 $staus=OrderStatus::where('id',$value->order_status)->first();
@@ -181,12 +225,12 @@ class ReportsController extends Controller
                     $value->customer_email,
                     $value->customer_phone,
                     $value->address,
-                    // $track,  
+                    // $track,
                     // $action,
                     $staus ? $staus->title :'',
                     str_replace('_', ' ',$value->payment_method),
-                    $value->payment_status,  
-                    'PKR '.$value->grandtotal,                          
+                    $value->payment_status,
+                    'PKR '.$value->grandtotal,
                  ]
                 );
             }
@@ -198,17 +242,17 @@ class ReportsController extends Controller
                 'data'=> $data,
             ]);
         }
-        
-        $category = Category::all();    
+
+        $category = Category::all();
         return view('admin.reports.product.index',compact('category'));
     }
     public function inventoryIndex(Request $request)
     {
-        
+
         if($request->ajax()){
             $query = Order::Query();
-            
-            
+
+
             if($request->name){
                 $query->where('customer_name','like','%'.$request->name.'%');
             }
@@ -230,7 +274,7 @@ class ReportsController extends Controller
             if ($request->startDate && $request->endDate) {
                 $query->whereBetween('created_at', [$request->startDate, $request->endDate]);
             }
-            
+
             if ($request->paymentMethod) {
                 $query->where('payment_method', 'like', '%' . $request->paymentMethod . '%');
             }
@@ -243,11 +287,11 @@ class ReportsController extends Controller
 
             $query = $query->orderBy('id', 'desc');
             $count = $query->get();
-            
+
             $records = $query->skip($request->start)
             ->take($request->length)
             ->get();
-            
+
             $data = [];
             foreach ($records as $key => $value) {
                 $staus=OrderStatus::where('id',$value->order_status)->first();
@@ -263,12 +307,12 @@ class ReportsController extends Controller
                     $value->customer_email,
                     $value->customer_phone,
                     $value->address,
-                    // $track,  
+                    // $track,
                     // $action,
                     $staus ? $staus->title :'',
                     str_replace('_', ' ',$value->payment_method),
-                    $value->payment_status,  
-                    'PKR '.$value->grandtotal,                          
+                    $value->payment_status,
+                    'PKR '.$value->grandtotal,
                  ]
                 );
             }
@@ -280,8 +324,8 @@ class ReportsController extends Controller
                 'data'=> $data,
             ]);
         }
-        
-        $category = Category::all();    
+
+        $category = Category::all();
         return view('admin.reports.inventory.index',compact('category'));
     }
 

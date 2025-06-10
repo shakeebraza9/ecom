@@ -176,6 +176,9 @@ Route::middleware(['web', 'auth'])->group(function () {
 
   // client Report
   Route::get('/admin/reports/clients/index', [App\Http\Controllers\Admin\ReportsController::class, 'clientIndex']);
+  Route::get('admin/reports/clients/export-pdf', [App\Http\Controllers\Admin\ReportsController::class, 'exportPdf'])->name('admin.reports.clients.exportPdf');
+Route::get('admin/reports/clients/export-excel', [App\Http\Controllers\Admin\ReportsController::class, 'exportExcel'])->name('admin.reports.clients.exportExcel');
+
   // Route::get('/admin/reports/clients/edit/{id}', [App\Http\Controllers\Admin\ReportsController::class, 'clientEdit']);
 
   // Product Report

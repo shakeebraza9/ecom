@@ -57,8 +57,8 @@
     <span class="hide-menu"> Report </span></a>
     <ul aria-expanded="false" class="collapse">
         <li><a href="{{URL::to('admin/reports/clients/index')}}">Customer</a></li>
-        <li><a href="{{URL::to('admin/reports/product/index')}}">Product</a></li>
-        <li><a href="{{URL::to('admin/reports/inventory/index')}}">Inventory</a></li>
+        {{--  <li><a href="{{URL::to('admin/reports/product/index')}}">Product</a></li>
+        <li><a href="{{URL::to('admin/reports/inventory/index')}}">Inventory</a></li>  --}}
     </ul>
 </li>
 
