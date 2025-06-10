@@ -26,11 +26,13 @@
         <!-- End Home Banner slider -->
 
         <!-- Categories -->
-            @include('theme.home.category')
+        @include('theme.home.category')
         <!-- End Categories -->
+        @include('theme.home.brand')
 
         <!-- collection -->
             @include('theme.home.collections')
+
         {{-- End  collection--}}
 
         <div class="section">
@@ -52,6 +54,7 @@
 
         <!-- Popular Products -->
         @include('theme.home.popular_products')
+
         <!-- End Popular Products -->
 
 

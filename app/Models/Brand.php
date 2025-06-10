@@ -27,4 +27,9 @@ class Brand extends Model
         return $this-> belongsTo(Filemanager::class, 'image_id');
     }
 
+    public function products()
+{
+    return $this->hasMany(Product::class);
+}
+
 }
