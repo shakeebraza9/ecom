@@ -196,6 +196,7 @@
                     @include('admin.products.thumbnail')
                     @include('admin.products.collections')
                     @include('admin.products.category')
+                    @include('admin.products.brand')
                     @include('admin.products.tags')
                     @include('admin.products.details')
                 </div>
