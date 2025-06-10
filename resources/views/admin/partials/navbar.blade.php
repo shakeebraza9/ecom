@@ -28,6 +28,7 @@
     </a>
     <ul aria-expanded="false" class="collapse">
         <li><a href="{{URL::to('admin/collections/index')}}" class="collection-link-tag">All Collection</a></li>
+        <li><a href="{{URL::to('admin/brand/index')}}" class="collection-link-tag">All Brand</a></li>
         <li><a href="{{URL::to('admin/categories/index')}}" class="category-link-tag">All Category</a></li>
         <li><a href="{{URL::to('admin/products/index')}}" class="product-link-tag">All Products</a></li>
         <li><a href="{{URL::to('admin/variations/index')}}" class="variation-link-tag">All Variations</a></li>

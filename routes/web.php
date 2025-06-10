@@ -210,6 +210,15 @@ Route::middleware(['web', 'auth'])->group(function () {
   Route::get('/admin/collections/delete/{id}', [App\Http\Controllers\Admin\CollectionController::class, 'delete']);
 
 
+  //Brand
+  Route::get('/admin/brand/index', [App\Http\Controllers\Admin\BrandController::class, 'index']);
+  Route::get('/admin/brand/create', [App\Http\Controllers\Admin\BrandController::class, 'create']);
+  Route::post('/admin/brand/store', [App\Http\Controllers\Admin\BrandController::class, 'store']);
+  Route::get('/admin/brand/edit/{id}', [App\Http\Controllers\Admin\BrandController::class, 'edit']);
+  Route::post('/admin/brand/update/{id}', [App\Http\Controllers\Admin\BrandController::class, 'update']);
+  Route::get('/admin/brand/delete/{id}', [App\Http\Controllers\Admin\BrandController::class, 'delete']);
+
+
 
 
     //products category

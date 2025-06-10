@@ -10,21 +10,21 @@ class Brand extends Model
 {
     protected $table = 'brands';
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         "id",
         "title",
         "slug",
-        "image",
-        "created_at",
-        "updated_at"
+        "image_id",
+    "meta_title",
+    "meta_description",
+    "meta_keywords",
+
     ];
 
 
+    public function image()
+    {
+        return $this-> belongsTo(Filemanager::class, 'image_id');
+    }
 
-   
 }
