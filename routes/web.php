@@ -13,10 +13,7 @@ use App\Models\User;
 |
 */
 
-Route::get('/',function(){
 
-    return redirect('/admin/login');
-});
 
 
 

@@ -41,7 +41,7 @@ class CartController extends Controller
         $carts = Cart::get_cart_details();
         
 
-        // dd(session()->get('cart', []));
+        dd($carts );
         $item = "";
         foreach ($carts['cart_items'] as $key => $value) {
             $item .= '<li class="item">

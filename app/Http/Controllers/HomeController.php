@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Mail;
 use Symfony\Component\Mime\Part\HtmlPart;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\DB;
 
 
 class HomeController extends Controller
@@ -49,12 +50,26 @@ public function home()
     $categories = Category::where('is_enable',1)->where('is_featured',1)->where('parent_id',null)->get();
     $sliders = Slider::where('is_enable',1)->get();
     $products = Product::where('is_enable',1)->where('is_featured',1)->get();
-
     $collectionProducts = Product::where('is_enable',1)->get();
     $collections = Collection::where('is_featured',1)->orderBy('sort')->get();
     $ProductCollections = ProductCollection::where('is_enable',1)->get();
+    $brands = Brand::where('is_enable', 1)->get();
 
-    $brands = Brand::where('is_enable', 1)->get(); // ✅ updated
+    // 🔻 Get global discount percent from settings table
+    $discountSetting = DB::table('settings')->where('field', 'discount_percent')->first();
+    $discountPercent = $discountSetting ? floatval($discountSetting->value) : 0;
+
+    // 🔻 Apply discount to all featured products
+    foreach ($products as $product) {
+        $discountAmount = ($product->price * $discountPercent) / 100;
+        $product->price = round($product->price - $discountAmount, 2);
+    }
+
+    // 🔻 Apply discount to all collection products
+    foreach ($collectionProducts as $product) {
+        $discountAmount = ($product->price * $discountPercent) / 100;
+        $product->price = round($product->price - $discountAmount, 2);
+    }
 
     return view('theme.home.home', compact(
         'categories',
@@ -66,6 +81,7 @@ public function home()
         'brands'
     ));
 }
+
 
 
 
@@ -235,6 +251,14 @@ public function home()
         $getcategories = $request->has('category') ? $request->category : null;
         $getCollection = $request->has('collection') ? $request->collection : null;
 
+        $discountSetting = DB::table('settings')->where('field', 'discount_percent')->first();
+$discountPercent = $discountSetting ? floatval($discountSetting->value) : 0;
+
+foreach ($data as $product) {
+    $discountAmount = ($product->price * $discountPercent) / 100;
+    $product->price = round($product->price - $discountAmount, 2);
+}
+
         return view('theme.shop.shop', compact('data', 'categories', 'collections', 'getcategories','getCollection','col','cat'));
     }
     public function shopData(Request $request)
@@ -282,56 +306,68 @@ public function home()
      /**
      * Show the application dashboard.
      * @return \Illuminate\Contracts\Support\Renderable
-     */
-    public function product($id)
-    {
+     */public function product($id)
+{
+    // Fetch product with variations
+    $product = Product::with(['variations.attributes.values', 'variations.attributes.attribute'])
+        ->where('slug', $id)
+        ->firstOrFail();
 
-        // $releated_products = Product::query()->limit(5)->get();
+    // Get related products randomly
+    $releated_products = Product::orderByRaw('RAND()')->limit(5)->get();
 
-        $product = Product::with(['variations.attributes.values','variations.attributes.attribute'])
-        ->where('slug',$id)
-        ->first();
+    // ✅ Get discount percent value from settings
+    $discountSetting = DB::table('settings')->where('field', 'discount_percent')->first();
+    $discount = 0;
 
-        $releated_products = Product::orderByRaw('RAND()')
-                           ->limit(5)
-                           ->get();
+    if ($discountSetting && is_numeric($discountSetting->value)) {
+        $discount = (float) $discountSetting->value;
+    }
 
-        $attributes = [];
-        $values = [];
-        $variations = [];
+    // 🟢 Apply discount on main product price if applicable
+    if ($discount > 0 && $product->price > 0) {
+        $discountAmount = ($product->price * $discount) / 100;
+        $product->price = round($product->price - $discountAmount, 2);
+    }
 
-        $arrays = [];
-        foreach ($product->variations as $key => $variation) {
-            foreach ($variation->attributes as $attribute) {
+    $attributes = [];
+    $values = [];
+    $variations = [];
 
-                array_push($variations,[
-                    'variation_id' => $variation->id,
-                    'sku' => $variation->sku,
-                    'quantity' => $variation->quantity,
-                    'price' => $variation->price,
-                    'image' => $variation->image,
-                    'attribute_id' => $attribute->attribute->id,
-                    'attribute_title' => $attribute->attribute->title,
-                    'value_id' => $attribute->values->id,
-                    'value_title' => $attribute->values->title
-                ]);
-                $attributes[$attribute->attribute->id] = $attribute->attribute->toArray();
-                $values[$attribute->values->id] = $attribute->values->toArray();
+    foreach ($product->variations as $variation) {
+        foreach ($variation->attributes as $attribute) {
 
+            // 🟢 Apply discount to variation price
+            $variationPrice = $variation->price;
+            if ($discount > 0 && $variationPrice > 0) {
+                $variationPrice = round($variationPrice - ($variationPrice * $discount) / 100, 2);
             }
 
+            $variations[] = [
+                'variation_id'     => $variation->id,
+                'sku'              => $variation->sku,
+                'quantity'         => $variation->quantity,
+                'price'            => $variationPrice,
+                'image'            => $variation->image,
+                'attribute_id'     => $attribute->attribute->id,
+                'attribute_title'  => $attribute->attribute->title,
+                'value_id'         => $attribute->values->id,
+                'value_title'      => $attribute->values->title,
+            ];
+
+            $attributes[$attribute->attribute->id] = $attribute->attribute->toArray();
+            $values[$attribute->values->id] = $attribute->values->toArray();
         }
-
-        return view('theme.product.product-detail',compact(
-            'product',
-            'attributes',
-            'values',
-            'variations',
-            'releated_products'
-        ));
-
-
     }
+
+    return view('theme.product.product-detail', compact(
+        'product',
+        'attributes',
+        'values',
+        'variations',
+        'releated_products'
+    ));
+}
 
 
 

@@ -1,6 +1,6 @@
 @extends('admin.layout')
 @section('css')
- 
+
 <link href="{{asset('admin/assets/summernote/summernote-bs4.css')}}" rel="stylesheet">
 <style>
     .error{
@@ -42,7 +42,19 @@
                                 <input type="hidden" name="site_currency[type]" value="text">
                             </div>
                         </div>
-                        
+                    <div class="col-md-12">
+    <div class="form-group">
+        <label>Discount Percent</label>
+        <input type="text"
+               value="{{ $data['shop']['discount_percent'] ?? '' }}"
+               class="form-control"
+               placeholder="Discount Percent"
+               name="discount_percent[value]">
+        <input type="hidden" name="discount_percent[type]" value="text">
+    </div>
+</div>
+
+
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label>Delivery Charges</label>
@@ -50,10 +62,10 @@
                                 <input type="hidden" name="delivery_charges[type]" value="text">
                             </div>
                         </div>
-                        
+
                         <div class="col-md-12">
-                            <input type="hidden" name="shop_banner[type]" value="text">    
-                            <div class="form-group file_manager_parent">                      
+                            <input type="hidden" name="shop_banner[type]" value="text">
+                            <div class="form-group file_manager_parent">
                                 <label>Logo :</label>
                                 <select placeholder="Select an option" class="file_manager" name="shop_banner[value]">
                                     <option id="{{ $data['shop']['shop_banner'] }}" value="{{ $data['shop']['shop_banner'] }}">{{ $data['shop']['shop_banner'] }}</option>
@@ -61,7 +73,7 @@
                             </div>
                         </div>
                         <div class="col-md-6 text-center"></div>
-                        
+
                         <div class="col-md-12 text-center pt-5">
                             <button type="submit" class="btn btn-primary">Update</button>
                         </div>
@@ -94,5 +106,5 @@
     });
 
 </script>
-    
+
 @endsection

@@ -27,7 +27,7 @@ class SettingController extends Controller
     |
     */
 
- 
+
     /**
      * Create a new controller instance.
      *
@@ -39,7 +39,7 @@ class SettingController extends Controller
     //     $data = Setting::where('grouping',$request->group)->orderBy('section_sorting')->get();
     //     $data = $data->groupBy('section');
 
-        
+
 
     //     return view('admin.settings.edit',compact('data','group'));
     // }
@@ -49,17 +49,17 @@ class SettingController extends Controller
         $settings = Setting::where('grouping', $group)
             ->orderBy('section_sorting')
             ->get();
-    
+
         $data = $settings->groupBy('section')->map(function ($section) {
             return $section->pluck('value', 'field')->toArray();
         });
-    
+
         if ($data->isEmpty()) {
             return redirect()->back()->with('error', 'No settings found for this group.');
         }
     return view('admin.settings.'.$group,compact('data', 'group'));
-    
-    
+
+
     }
 
 
@@ -70,16 +70,16 @@ class SettingController extends Controller
      */
     public function update(Request $request)
     {
-        
+
         foreach ($request->all() as $key => $value) {
             if(isset($value['value'])){
                 if(in_array($value['type'],['text','textarea','keywords','image'])){
                      Setting::where('field',$key)->update(["value" => $value['value']]);
-                }       
+                }
             }
         }
         return back()->with('success','Record Updated');
-        
+
     }
-  
+
 }

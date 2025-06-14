@@ -157,8 +157,8 @@ $(document).ready(function () {
             }
 
                 response.cart_items.forEach(element => {
-
-                    let attr = "";
+    console.log(element);
+                        let attr = "";
                     element.attributes.forEach(element => {
                         attr += element.attribute_title+" : "+ element.values_title+"<br>";
                     });
